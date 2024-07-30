@@ -4,7 +4,7 @@ first_occurence_eoa as (
         s.user as "from",
         s.protocol,
         min(date) as fod
-    from dune.pyor_xyz.result_arb_base_all_materialize_v_2 s
+    from dune.pyor_xyz.result_arb_base_all_materialize_final s
     where 1=1
     -- and protocol = 'Camelot'
     group by 1,2
