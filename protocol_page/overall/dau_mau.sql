@@ -1,22 +1,12 @@
-with 
-segmentation as (
-    select 
-        user,
-        segment
-    from query_{{segment_query}}
-),
-ethereum_summary_daily as (
+with ethereum_summary_daily as (
     select
         date_trunc('day',date) as date,
-        s.user as "from",
-        coalesce(u.segment, {{fallback_value}}) as segment,
+        user as "from",
         protocol
-    from dune.pyor_xyz.result_arb_base_all_materialize_final s
-        left join segmentation u 
-            on s.user = u.user
+    from dune.pyor_xyz.result_arb_base_all_materialize_v_2
     where 1 = 1
     -- and protocol = 'Camelot'
-    group by 1, 2, 3, 4
+    group by 1, 2, 3
 ),
 
 date_range as (
@@ -38,7 +28,6 @@ diff_calculated as (
             ethereum_summary_daily."date",
             ethereum_summary_daily."from",
             ethereum_summary_daily.protocol,
-            ethereum_summary_daily.segment,
             date_diff('day', ethereum_summary_daily.date,sequence_table.date_sequence) as diff 
         from sequence_table 
         join ethereum_summary_daily 
@@ -51,12 +40,11 @@ final as (
     select
         date_sequence as date,
         protocol,
-        segment,
         count(distinct case when diff = 0 then "from" end) as dau, --r0_active_users_avalanche,
         count(distinct case when diff >= 0 and diff <= 6 then "from" end) as wau, --r_minus_7_active_users_avalanche,
         count(distinct case when diff >= 0 and diff <= 29 then "from" end) as mau --r_minus_30__active_users_avalanche
     from diff_calculated
-    group by 1,2,3
+    group by 1,2
 )
 
 select *,

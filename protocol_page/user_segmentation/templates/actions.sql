@@ -12,7 +12,7 @@ data as (
         s.user,
         coalesce(u.segment, {{fallback_value}}) as segment,
         count(*) as actions
-    from dune.pyor_xyz.result_arb_base_all_materialize_v_2 s
+    from dune.pyor_xyz.result_arb_base_all_materialize_final s
         left join segmentation u 
             on s.user = u.user
     -- where protocol = 'Camelot'
