@@ -1,4 +1,6 @@
-* Each Template has two params:
+## User Segmentation
+
+* each template has two params:
     1. segmentation query `segment_query`
     2. default fall back value `fallback_value` 
    
