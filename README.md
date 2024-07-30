@@ -11,3 +11,4 @@ This repo contains queries for the arbitrum dashboard
 * each segment outputs `user` and `segment`
 * each segment contains `default_value` to be passed
   
+## TODO : update tables
