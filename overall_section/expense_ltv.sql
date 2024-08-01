@@ -83,52 +83,52 @@ select s.*,
     a.price as arb_price,
     sum(s.seq_fee_paid*e.price) over(order by s.date) as cumu_seq_fee_paid,
     sum(
-        case when s.date <= g.start_date 
+        case when s.date <= date'2023-11-01' 
             then s.seq_fee_paid*e.price
         else 0 end
     ) over(order by s.date) as cumu_seq_fee_paid_pre_program,
     sum(
-        case when s.date > g.start_date 
+        case when s.date > date'2023-11-01' 
             then s.seq_fee_paid*e.price
         else 0 end
     ) over(order by s.date) as cumu_seq_fee_paid_post_program,
     g.grant_amount * a.price as grant_usd,
     d.arb_claimed_total * a.price as disbursed_usd,
-    case when s.date >= g.start_date
+    case when s.date >= date'2023-11-01'
         -- CALC acq_cost as grant amount spent per day / new users 
             then ((
                     (g.grant_amount*a.price)/
-                    date_diff('day', g.start_date, current_date)
+                    date_diff('day', date'2023-11-01', current_date)
                 )/
                 n.new_eoa_addresses 
             )
         else 0
     end as acq_cost,
     
-    case when s.date >= g.start_date
+    case when s.date >= date'2023-11-01'
         -- -- CALC acq_cost as grant amount spent per day * number days since start / total new addresses
         then (
-                (g.grant_amount*a.price)*date_diff('day', g.start_date, s.date)/
-                date_diff('day', g.start_date, current_date)
+                (g.grant_amount*a.price)*date_diff('day', date'2023-11-01', s.date)/
+                date_diff('day', date'2023-11-01', current_date)
             )/
             sum(
                 case 
-                    when s.date > g.start_date 
+                    when s.date > date'2023-11-01' 
                     then coalesce(n.new_eoa_addresses,0)
                 else 0 end
             ) over (order by s.date)
         else 0
     end as acq_cost_2,
 
-    case when s.date >= g.start_date
+    case when s.date >= date'2023-11-01'
         -- -- CALC acq_cost as incentives distributed per day * number days since start / total new addresses
         then (
-                (d.arb_claimed_total*a.price)*date_diff('day', g.start_date, s.date)/
-                date_diff('day', g.start_date, current_date)
+                (d.arb_claimed_total*a.price)*date_diff('day', date'2023-11-01', s.date)/
+                date_diff('day', date'2023-11-01', current_date)
             )/
             sum(
                 case 
-                    when s.date > g.start_date 
+                    when s.date > date'2023-11-01' 
                     then coalesce(n.new_eoa_addresses,0)
                 else 0 end
             ) over (order by s.date)
