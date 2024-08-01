@@ -19,8 +19,8 @@ first_occurence_eoa as (
 ),
 new_users_eoa as (
     select        
-        fod as date,
-        segment,
+        fod as d
+        coalesce(u.segment, {{fallback_value}}) as segment,
         count(distinct "from") as new_eoa_addresses
     from first_occurence_eoa
     group by 1,2
@@ -28,14 +28,14 @@ new_users_eoa as (
 total_addresses_eoa as (
     select 
         date,
-        segment,
+        coalesce(u.segment, {{fallback_value}}) as segment,
         new_eoa_addresses,
         sum(new_eoa_addresses) over (partition by segment order by date) as total_eoa_cumulative_addresses
     from new_users_eoa
 ),
 grant_amount as (
     select 
-        segment,
+        coalesce(u.segment, {{fallback_value}}) as segment,
         date'2023-11-01' as start_date,
         sum(grant_amount) as grant_amount
     from dune.pyor_xyz.dataset_arb_incentives_distributed s
@@ -46,7 +46,7 @@ grant_amount as (
 ),
 disbursed_amount as (
     select 
-        segment,
+        coalesce(u.segment, {{fallback_value}}) as segment,
         sum(arb_claimed) as arb_claimed_total
     from dune.pyor_xyz.result_arb_claim_final_level_summary s
         left join segmentation u 
@@ -73,7 +73,7 @@ eth_prices as (
 summary_aggregated as (
     select 
         date,
-        segment,
+        coalesce(u.segment, {{fallback_value}}) as segment,
         sum(txs) as txs,
         sum(calls) as calls,
         sum(giga_gas) as giga_gas,
