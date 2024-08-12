@@ -19,7 +19,7 @@ first_occurence_eoa as (
 ),
 new_users_eoa as (
     select        
-        fod as d
+        fod as date,
         coalesce(u.segment, {{fallback_value}}) as segment,
         count(distinct "from") as new_eoa_addresses
     from first_occurence_eoa
