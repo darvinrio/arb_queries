@@ -5,7 +5,7 @@ with cohort_sizes as (
     select 
         cohort_summary.cohort_month,
         count(distinct cohort_summary.user) as cohort_size
-    from dune.pyor_xyz.result_arb_metrics_retention_query_test_final cohort_summary
+    from dune.pyor_xyz.result_arb_metrics_actions_retention_query_final_test cohort_summary
     where cohort_summary.cohort_month = cohort_summary.activity_month
     group by 1
 ),
@@ -15,7 +15,7 @@ returning_users as (
         cohort_summary.cohort_month,
         date_diff('month', cohort_summary.cohort_month,cohort_summary.activity_month) as retention_month,
         count(case when cohort_summary.transaction_count > 0 then 1 end) as count_of_returning_users
-    from dune.pyor_xyz.result_arb_metrics_retention_query_test_final cohort_summary
+    from dune.pyor_xyz.result_arb_metrics_actions_retention_query_final_test cohort_summary
     group by 1, 2
 ),
 

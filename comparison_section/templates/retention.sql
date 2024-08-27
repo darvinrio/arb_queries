@@ -13,7 +13,7 @@ cohort_sizes as (
         cohort_summary.cohort_month,
         coalesce(u.segment, {{fallback_value}}) as segment,
         count(distinct cohort_summary.user) as cohort_size
-    from dune.pyor_xyz.result_arb_metrics_retention_query_test_final cohort_summary
+    from dune.pyor_xyz.result_arb_metrics_actions_retention_query_final_test cohort_summary
         left join segmentation u 
             on cohort_summary.protocol = u.protocol
     where cohort_summary.cohort_month = cohort_summary.activity_month
@@ -27,7 +27,7 @@ returning_users as (
         coalesce(u.segment, {{fallback_value}}) as segment,
         date_diff('month', cohort_summary.cohort_month,cohort_summary.activity_month) as retention_month,
         count(case when cohort_summary.transaction_count > 0 then 1 end) as count_of_returning_users
-    from dune.pyor_xyz.result_arb_metrics_retention_query_test_final cohort_summary
+    from dune.pyor_xyz.result_arb_metrics_actions_retention_query_final_test cohort_summary
         left join segmentation u 
             on cohort_summary.protocol = u.protocol
     -- where protocol = 'Camelot'
